@@ -36,7 +36,7 @@ To build the native `.hdll` files you'll need:
 To build the `.hdll` files, run:
 
 ```bash
-haxelib run hl_glfw build
+haxelib run hl_glfw
 ```
 
 This compiles the native GLFW bindings for your current platform.
