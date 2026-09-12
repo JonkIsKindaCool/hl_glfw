@@ -1,17 +1,21 @@
 {
     "name": "hl_glfw",
-    "url": "https://github.com/jasononeil/useless/",
+    "url": "https://github.com/JonkIsKindaCool/hl_glfw",
     "license": "MIT",
     "tags": [
-        "cross",
-        "useless"
+        "window",
+        "glfw",
+        "hashlink",
+        "game",
+        "haxe",
+        "extern"
     ],
-    "description": "This library is useless in the same way on every platform.",
+    "description": "Hashlink bindings and wrappers for hashlink.",
     "version": "1.0.0",
     "classPath": "src/",
-    "releasenote": "Initial release, everything is working correctly.",
+    "releasenote": "Initial release.",
     "contributors": [
-        "Juraj"
+        "JonkIsKindaCool"
     ],
     "dependencies": {}
 }

@@ -44,7 +44,6 @@ This compiles the native GLFW bindings for your current platform.
 ## Usage/Examples
 
 ```haxe
-import hl.glad.GL;
 import hl.glfw.GlfwWindow;
 import hl.glfw.GlfwContext;
 import hl.glfw.GlfwInput;
@@ -65,7 +64,7 @@ class Main {
 		}
 
 		window.onSizeChanged = (w, h) -> {
-			GL.viewport(0, 0, w, h);
+			trace('Size Change(w: $w, h: $h)');
 		};
 
 		window.makeCurrent();
@@ -96,7 +95,9 @@ class Main {
 | `GlfwContext` | Global GLFW state: initialization, termination, event polling, swap interval |
 | `GlfwWindow` | Window creation and management, size/close callbacks, buffer swapping |
 | `GlfwInput` | Input event types (keys, mods, actions) used in window callbacks |
-| `hl.glad.GL` | OpenGL function bindings, loaded once a context is current |
+| `GlfwKey` | GLFW Keycodes |
+| `GlfwMonitor` | Monitor management, get the size, name, position, etc |
+| `GlfwTime` | Utilities for time management in GLFW |
 
 ## Contributing
 
