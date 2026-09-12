@@ -1,0 +1,6 @@
+[submodule "project/libs/glfw"]
+	path = project/libs/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "project/libs/hashlink"]
+	path = project/libs/hashlink
+	url = https://github.com/HaxeFoundation/hashlink.git
