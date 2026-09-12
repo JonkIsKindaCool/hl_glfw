@@ -1,0 +1,113 @@
+<xml>
+    <set name="HXCPP_API_LEVEL" value="400" />
+
+    <include name="${HXCPP}/build-tool/BuildCommon.xml" />
+
+    <!-- ====================== -->
+    <!-- Configuración general  -->
+    <!-- ====================== -->
+    <set name="HL_ROOT" value="libs/hashlink" />
+    <set name="HL_SRC" value="${HL_ROOT}/src" />
+    <set name="HL_INCLUDE" value="${HL_ROOT}/src" />
+    <set name="PCRE_SRC" value="${HL_ROOT}/include/pcre" />
+
+    <!-- ====================== -->
+    <!-- PCRE2 (embebido)       -->
+    <!-- ====================== -->
+    <files id="pcre_sources">
+        <depend name="${PCRE_SRC}" />
+
+        <file name="${PCRE_SRC}/pcre2_auto_possess.c" />
+        <file name="${PCRE_SRC}/pcre2_chartables.c" />
+        <file name="${PCRE_SRC}/pcre2_compile.c" />
+        <file name="${PCRE_SRC}/pcre2_config.c" />
+        <file name="${PCRE_SRC}/pcre2_context.c" />
+        <file name="${PCRE_SRC}/pcre2_convert.c" />
+        <file name="${PCRE_SRC}/pcre2_dfa_match.c" />
+        <file name="${PCRE_SRC}/pcre2_error.c" />
+        <file name="${PCRE_SRC}/pcre2_extuni.c" />
+        <file name="${PCRE_SRC}/pcre2_find_bracket.c" />
+        <file name="${PCRE_SRC}/pcre2_jit_compile.c" />
+        <file name="${PCRE_SRC}/pcre2_maketables.c" />
+        <file name="${PCRE_SRC}/pcre2_match_data.c" />
+        <file name="${PCRE_SRC}/pcre2_match.c" />
+        <file name="${PCRE_SRC}/pcre2_newline.c" />
+        <file name="${PCRE_SRC}/pcre2_ord2utf.c" />
+        <file name="${PCRE_SRC}/pcre2_pattern_info.c" />
+        <file name="${PCRE_SRC}/pcre2_script_run.c" />
+        <file name="${PCRE_SRC}/pcre2_serialize.c" />
+        <file name="${PCRE_SRC}/pcre2_string_utils.c" />
+        <file name="${PCRE_SRC}/pcre2_study.c" />
+        <file name="${PCRE_SRC}/pcre2_substitute.c" />
+        <file name="${PCRE_SRC}/pcre2_substring.c" />
+        <file name="${PCRE_SRC}/pcre2_tables.c" />
+        <file name="${PCRE_SRC}/pcre2_ucd.c" />
+        <file name="${PCRE_SRC}/pcre2_valid_utf.c" />
+        <file name="${PCRE_SRC}/pcre2_xclass.c" />
+
+        <compilerflag value="-I${PCRE_SRC}" />
+        <compilerflag value="-DHAVE_CONFIG_H" />
+        <compilerflag value="-DPCRE2_STATIC" />
+        <compilerflag value="-DPCRE2_CODE_UNIT_WIDTH=16" />
+    </files>
+
+    <!-- ====================== -->
+    <!-- Runtime + STD de HL    -->
+    <!-- (esto es exactamente  -->
+    <!-- lo que compone LIBHL) -->
+    <!-- ====================== -->
+    <files id="hashlink_sources">
+        <depend name="${HL_INCLUDE}/hl.h" />
+
+        <compilerflag value="-DLIBHL_EXPORTS" />
+        <compilerflag value="-DHL_MAKE_STATIC" />
+
+        <file name="${HL_SRC}/gc.c" />
+
+        <file name="${HL_SRC}/std/array.c" />
+        <file name="${HL_SRC}/std/buffer.c" />
+        <file name="${HL_SRC}/std/bytes.c" />
+        <file name="${HL_SRC}/std/cast.c" />
+        <file name="${HL_SRC}/std/date.c" />
+        <file name="${HL_SRC}/std/error.c" />
+        <file name="${HL_SRC}/std/debug.c" />
+        <file name="${HL_SRC}/std/file.c" />
+        <file name="${HL_SRC}/std/fun.c" />
+        <file name="${HL_SRC}/std/maps.c" />
+        <file name="${HL_SRC}/std/math.c" />
+        <file name="${HL_SRC}/std/obj.c" />
+        <file name="${HL_SRC}/std/random.c" />
+        <file name="${HL_SRC}/std/regexp.c" />
+        <file name="${HL_SRC}/std/socket.c" />
+        <file name="${HL_SRC}/std/string.c" />
+        <file name="${HL_SRC}/std/sys.c" />
+        <file name="${HL_SRC}/std/types.c" />
+        <file name="${HL_SRC}/std/ucs2.c" />
+        <file name="${HL_SRC}/std/thread.c" />
+        <file name="${HL_SRC}/std/process.c" />
+        <file name="${HL_SRC}/std/track.c" />
+
+        <compilerflag value="-I${HL_INCLUDE}" />
+        <compilerflag value="-I${PCRE_SRC}" />
+        <compilerflag value="-DLIBHL_EXPORTS" />
+        <compilerflag value="-DHAVE_CONFIG_H" />
+        <compilerflag value="-DPCRE2_STATIC" />
+        <compilerflag value="-DPCRE2_CODE_UNIT_WIDTH=16" />
+
+        <section if="windows">
+            <compilerflag value="-D_CRT_SECURE_NO_WARNINGS" />
+        </section>
+
+        <section if="linux">
+            <compilerflag value="-DHL_LINUX" />
+        </section>
+    </files>
+
+    <target id="default" tool="linker" toolid="static_link" output="hl">
+        <ext value=".lib" />
+        <outdir name="libs" />
+
+        <files id="hashlink_sources" />
+        <files id="pcre_sources" />
+    </target>
+</xml>

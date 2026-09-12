@@ -1,0 +1,111 @@
+<xml>
+    <set name="HXCPP_API_LEVEL" value="400" />
+
+    <set name="GLFW_SRC" value="libs/glfw/src" />
+    <set name="GLFW_INCLUDE" value="libs/glfw/include" />
+
+    <set name="HL_ROOT" value="libs/hashlink" />
+    <set name="HL_INCLUDE" value="${HL_ROOT}/src" />
+
+    <files id="glfw_sources">
+        <depend name="${GLFW_INCLUDE}" />
+
+        <file name="${GLFW_SRC}/context.c" />
+        <file name="${GLFW_SRC}/init.c" />
+        <file name="${GLFW_SRC}/input.c" />
+        <file name="${GLFW_SRC}/monitor.c" />
+        <file name="${GLFW_SRC}/platform.c" />
+        <file name="${GLFW_SRC}/vulkan.c" />
+        <file name="${GLFW_SRC}/window.c" />
+        <file name="${GLFW_SRC}/egl_context.c" />
+        <file name="${GLFW_SRC}/osmesa_context.c" />
+        <file name="${GLFW_SRC}/null_init.c" />
+        <file name="${GLFW_SRC}/null_joystick.c" />
+        <file name="${GLFW_SRC}/null_monitor.c" />
+        <file name="${GLFW_SRC}/null_window.c" />
+
+        <section if="windows">
+            <file name="${GLFW_SRC}/win32_init.c" />
+            <file name="${GLFW_SRC}/win32_joystick.c" />
+            <file name="${GLFW_SRC}/win32_monitor.c" />
+            <file name="${GLFW_SRC}/win32_time.c" />
+            <file name="${GLFW_SRC}/win32_thread.c" />
+            <file name="${GLFW_SRC}/win32_window.c" />
+            <file name="${GLFW_SRC}/win32_module.c" />
+            <file name="${GLFW_SRC}/wgl_context.c" />
+            <compilerflag value="-D_GLFW_WIN32" />
+        </section>
+
+        <section if="linux">
+            <file name="${GLFW_SRC}/x11_init.c" />
+            <file name="${GLFW_SRC}/x11_monitor.c" />
+            <file name="${GLFW_SRC}/x11_window.c" />
+            <file name="${GLFW_SRC}/xkb_unicode.c" />
+            <file name="${GLFW_SRC}/posix_time.c" />
+            <file name="${GLFW_SRC}/posix_thread.c" />
+            <file name="${GLFW_SRC}/glx_context.c" />
+            <file name="${GLFW_SRC}/linux_joystick.c" />
+            <compilerflag value="-D_GLFW_X11" />
+        </section>
+
+        <section if="mac">
+            <file name="${GLFW_SRC}/cocoa_init.m" />
+            <file name="${GLFW_SRC}/cocoa_joystick.m" />
+            <file name="${GLFW_SRC}/cocoa_monitor.m" />
+            <file name="${GLFW_SRC}/cocoa_window.m" />
+            <file name="${GLFW_SRC}/cocoa_time.c" />
+            <file name="${GLFW_SRC}/posix_thread.c" />
+            <file name="${GLFW_SRC}/nsgl_context.m" />
+            <compilerflag value="-D_GLFW_COCOA" />
+        </section>
+
+        <compilerflag value="-I${GLFW_INCLUDE}" />
+        <compilerflag value="-I${GLFW_SRC}" />
+
+        <compilerflag value="-I${HL_INCLUDE}" />
+    </files>
+
+    <files id="haxe">
+        <file name="src/glfw.cpp" />
+
+        <compilerflag value="-I${HL_INCLUDE}" />
+        <compilerflag value="-I${GLFW_INCLUDE}" />
+        <compilerflag value="-DLIBHL_STATIC" />
+
+        <section if="windows">
+            <compilerflag value="-std:c++20" />
+        </section>
+    </files>
+
+    <target id="default" tool="linker" toolid="dll" output="glfw">
+        <ext value=".hdll" />
+
+        <files id="haxe" />
+        <files id="glfw_sources" />
+
+        <lib name="libs/hl.lib" />
+
+        <section if="windows">
+            <lib name="opengl32.lib" />
+            <lib name="gdi32.lib" />
+            <lib name="user32.lib" />
+            <lib name="shell32.lib" />
+            <lib name="winmm.lib" />
+        </section>
+
+        <section if="linux">
+            <lib name="-lGL" />
+            <lib name="-lX11" />
+            <lib name="-lpthread" />
+            <lib name="-ldl" />
+            <lib name="-lm" />
+        </section>
+
+        <section if="mac">
+            <lib name="-framework Cocoa" />
+            <lib name="-framework OpenGL" />
+            <lib name="-framework IOKit" />
+            <lib name="-framework CoreVideo" />
+        </section>
+    </target>
+</xml>

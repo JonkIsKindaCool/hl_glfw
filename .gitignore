@@ -1,0 +1,6 @@
+project/obj
+project/glfw.hdll
+project/glfw.hdll.hash
+project/libs/hl.lib
+project/libs/hl.lib.hash
+.vscode
