@@ -2,7 +2,11 @@
 #include <hl.h>
 
 #undef HL_PRIM
+#ifdef _WIN32
 #define HL_PRIM extern "C" __declspec(dllexport)
+#else
+#define HL_PRIM extern "C" __attribute__((visibility("default")))
+#endif
 
 #include "GLFW/glfw3.h"
 #include <string.h>
