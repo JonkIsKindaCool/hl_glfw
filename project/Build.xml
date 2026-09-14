@@ -9,9 +9,6 @@
     <set name="HL_SRC" value="${HL_ROOT}/src" />
     <set name="HL_INCLUDE" value="${HL_ROOT}/src" />
 
-    <!-- ============================================================ -->
-    <!-- GLFW sources                                                  -->
-    <!-- ============================================================ -->
     <files id="glfw_sources">
         <depend name="${GLFW_INCLUDE}" />
 
@@ -52,6 +49,8 @@
             <file name="${GLFW_SRC}/xkb_unicode.c" />
             <file name="${GLFW_SRC}/posix_time.c" />
             <file name="${GLFW_SRC}/posix_thread.c" />
+            <file name="${GLFW_SRC}/posix_module.c" />
+            <file name="${GLFW_SRC}/posix_poll.c" />
             <file name="${GLFW_SRC}/glx_context.c" />
             <file name="${GLFW_SRC}/linux_joystick.c" />
             <compilerflag value="-D_GLFW_X11" />
@@ -69,6 +68,8 @@
             <file name="${GLFW_SRC}/cocoa_window.m" />
             <file name="${GLFW_SRC}/cocoa_time.c" />
             <file name="${GLFW_SRC}/posix_thread.c" />
+            <file name="${GLFW_SRC}/posix_module.c" />
+            <file name="${GLFW_SRC}/posix_poll.c" />
             <file name="${GLFW_SRC}/nsgl_context.m" />
             <compilerflag value="-D_GLFW_COCOA" />
         </section>
@@ -89,6 +90,7 @@
 
         <compilerflag value="-I${HL_INCLUDE}" />
         <compilerflag value="-I${GLFW_INCLUDE}" />
+
         <compilerflag value="-DLIBHL_STATIC" />
 
         <section if="windows">
@@ -127,6 +129,7 @@
 
         <files id="haxe" />
         <files id="glfw_sources" />
+
         <lib name="binaries/${OUT_ARCH}/hl.lib" />
 
         <section if="windows">
