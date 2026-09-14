@@ -85,16 +85,115 @@
 
         <section if="windows">
             <compilerflag value="-D_CRT_SECURE_NO_WARNINGS" />
+
+            <section if="HXCPP_M64">
+                <compilerflag value="-DHL_64" />
+            </section>
+            <section unless="HXCPP_M64">
+                <error value="Hashlink in windows requires 64 bits. Compile with: haxelib run hxcpp BuildHashlink.xml -DHXCPP_M64" />
+            </section>
         </section>
 
         <section if="linux">
             <compilerflag value="-DHL_LINUX" />
+            <section if="HXCPP_M64">
+                <compilerflag value="-DHL_64" />
+            </section>
+            <section if="HXCPP_M32">
+                <compilerflag value="-m32" />
+                <linkerflag value="-m32" />
+            </section>
+            <section if="HXCPP_ARM64">
+                <compilerflag value="-DHL_64" />
+            </section>
+        </section>
+
+        <section if="mac">
+            <compilerflag value="-DHL_MAC" />
+            <section if="HXCPP_M64">
+                <compilerflag value="-DHL_64" />
+            </section>
+            <section if="HXCPP_ARM64">
+                <compilerflag value="-DHL_64" />
+            </section>
+        </section>
+
+        <section if="iphoneos">
+            <compilerflag value="-DHL_IOS" />
+            <compilerflag value="-DHL_MAC" />
+            <section if="HXCPP_ARM64">
+                <compilerflag value="-DHL_64" />
+            </section>
+        </section>
+
+        <section if="iphonesim">
+            <compilerflag value="-DHL_IOS" />
+            <compilerflag value="-DHL_MAC" />
+            <compilerflag value="-DHL_64" />
+        </section>
+
+        <section if="android">
+            <compilerflag value="-DHL_ANDROID" />
+            <compilerflag value="-DHL_LINUX" />
+            <section if="HXCPP_ARM64">
+                <compilerflag value="-DHL_64" />
+            </section>
+            <section if="HXCPP_M64">
+                <compilerflag value="-DHL_64" />
+            </section>
         </section>
     </files>
 
+    <set name="OUT_ARCH" value="unknown" />
+
+    <section if="windows">
+        <set name="OUT_ARCH" value="Windows64" />
+    </section>
+
+    <section if="linux">
+        <set name="OUT_ARCH" value="Linux64" />
+        <section if="HXCPP_M32">
+            <set name="OUT_ARCH" value="Linux32" />
+        </section>
+        <section if="HXCPP_ARM64">
+            <set name="OUT_ARCH" value="LinuxArm64" />
+        </section>
+        <section if="HXCPP_ARM7">
+            <set name="OUT_ARCH" value="LinuxArm7" />
+        </section>
+    </section>
+
+    <section if="mac">
+        <set name="OUT_ARCH" value="Mac64" />
+        <section if="HXCPP_ARM64">
+            <set name="OUT_ARCH" value="MacArm64" />
+        </section>
+    </section>
+
+    <section if="iphoneos">
+        <set name="OUT_ARCH" value="iPhoneArm64" />
+    </section>
+
+    <section if="iphonesim">
+        <set name="OUT_ARCH" value="iPhoneSim64" />
+    </section>
+
+    <section if="android">
+        <set name="OUT_ARCH" value="AndroidArm7" />
+        <section if="HXCPP_ARM64">
+            <set name="OUT_ARCH" value="AndroidArm64" />
+        </section>
+        <section if="HXCPP_X86">
+            <set name="OUT_ARCH" value="AndroidX86" />
+        </section>
+        <section if="HXCPP_M64">
+            <set name="OUT_ARCH" value="AndroidX64" />
+        </section>
+    </section>
+
     <target id="default" tool="linker" toolid="static_link" output="hl">
         <ext value=".lib" />
-        <outdir name="libs" />
+        <outdir name="binaries/${OUT_ARCH}" />
 
         <files id="hashlink_sources" />
         <files id="pcre_sources" />

@@ -8,6 +8,10 @@
 #define HL_PRIM extern "C" __attribute__((visibility("default")))
 #endif
 
+#undef DEFINE_PRIM_WITH_NAME
+#define DEFINE_PRIM_WITH_NAME(t,name,args,realName) \
+    HL_EXTERN_C HL_EXPORT void *hlp_##realName( const char **sign ) { *sign = _FUN(t,args); return (void*)(&HL_NAME(realName)); }
+
 #include "GLFW/glfw3.h"
 #include <string.h>
 

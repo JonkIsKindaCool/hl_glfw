@@ -1,12 +1,17 @@
 <xml>
     <set name="HXCPP_API_LEVEL" value="400" />
 
-    <set name="GLFW_SRC" value="libs/glfw/src" />
-    <set name="GLFW_INCLUDE" value="libs/glfw/include" />
+    <set name="GLFW_ROOT" value="libs/glfw" />
+    <set name="GLFW_SRC" value="${GLFW_ROOT}/src" />
+    <set name="GLFW_INCLUDE" value="${GLFW_ROOT}/include" />
 
     <set name="HL_ROOT" value="libs/hashlink" />
+    <set name="HL_SRC" value="${HL_ROOT}/src" />
     <set name="HL_INCLUDE" value="${HL_ROOT}/src" />
 
+    <!-- ============================================================ -->
+    <!-- GLFW sources                                                  -->
+    <!-- ============================================================ -->
     <files id="glfw_sources">
         <depend name="${GLFW_INCLUDE}" />
 
@@ -34,6 +39,10 @@
             <file name="${GLFW_SRC}/win32_module.c" />
             <file name="${GLFW_SRC}/wgl_context.c" />
             <compilerflag value="-D_GLFW_WIN32" />
+
+            <section unless="HXCPP_M64">
+                <error value="Compiling HDLL requires 64 bits. Compile with: haxelib run hxcpp Build.xml -DHXCPP_M64" />
+            </section>
         </section>
 
         <section if="linux">
@@ -46,6 +55,11 @@
             <file name="${GLFW_SRC}/glx_context.c" />
             <file name="${GLFW_SRC}/linux_joystick.c" />
             <compilerflag value="-D_GLFW_X11" />
+
+            <section if="HXCPP_M32">
+                <compilerflag value="-m32" />
+                <linkerflag value="-m32" />
+            </section>
         </section>
 
         <section if="mac">
@@ -59,13 +73,18 @@
             <compilerflag value="-D_GLFW_COCOA" />
         </section>
 
+        <section unless="windows || linux || mac">
+            <error value="Unsopported platform." />
+        </section>
+
         <compilerflag value="-I${GLFW_INCLUDE}" />
         <compilerflag value="-I${GLFW_SRC}" />
-
         <compilerflag value="-I${HL_INCLUDE}" />
     </files>
 
     <files id="haxe">
+        <depend name="${HL_INCLUDE}/hl.h" />
+
         <file name="src/glfw.cpp" />
 
         <compilerflag value="-I${HL_INCLUDE}" />
@@ -74,16 +93,41 @@
 
         <section if="windows">
             <compilerflag value="-std:c++20" />
+            <compilerflag value="-D_CRT_SECURE_NO_WARNINGS" />
         </section>
+
     </files>
+
+    <set name="OUT_ARCH" value="unknown" />
+
+    <section if="windows">
+        <set name="OUT_ARCH" value="Windows64" />
+    </section>
+
+    <section if="linux">
+        <set name="OUT_ARCH" value="Linux64" />
+        <section if="HXCPP_M32">
+            <set name="OUT_ARCH" value="Linux32" />
+        </section>
+        <section if="HXCPP_ARM64">
+            <set name="OUT_ARCH" value="LinuxArm64" />
+        </section>
+    </section>
+
+    <section if="mac">
+        <set name="OUT_ARCH" value="Mac64" />
+        <section if="HXCPP_ARM64">
+            <set name="OUT_ARCH" value="MacArm64" />
+        </section>
+    </section>
 
     <target id="default" tool="linker" toolid="dll" output="glfw">
         <ext value=".hdll" />
+        <outdir name="binaries/${OUT_ARCH}" />
 
         <files id="haxe" />
         <files id="glfw_sources" />
-
-        <lib name="libs/hl.lib" />
+        <lib name="binaries/${OUT_ARCH}/hl.lib" />
 
         <section if="windows">
             <lib name="opengl32.lib" />
