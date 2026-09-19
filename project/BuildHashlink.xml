@@ -90,7 +90,7 @@
                 <compilerflag value="-DHL_64" />
             </section>
             <section unless="HXCPP_M64">
-                <error value="Hashlink in windows requires 64 bits. Compile with: haxelib run hxcpp BuildHashlink.xml -DHXCPP_M64" />
+                <error value="HashLink on Windows requires 64 bits. Compile with: haxelib run hxcpp BuildHashlink.xml -DHXCPP_M64" />
             </section>
         </section>
 
@@ -191,11 +191,27 @@
         </section>
     </section>
 
-    <target id="default" tool="linker" toolid="static_link" output="hl">
-        <ext value=".lib" />
-        <outdir name="binaries/${OUT_ARCH}" />
+    <section if="windows">
+        <target id="default" tool="linker" toolid="dll" output="libhl">
+            <ext value=".dll" />
+            <outdir name="binaries/${OUT_ARCH}" />
 
-        <files id="hashlink_sources" />
-        <files id="pcre_sources" />
-    </target>
+            <files id="hashlink_sources" />
+            <files id="pcre_sources" />
+
+            <lib name="ws2_32.lib" />
+            <lib name="winmm.lib" />
+            <lib name="user32.lib" />
+        </target>
+    </section>
+
+    <section unless="windows">
+        <target id="default" tool="linker" toolid="static_link" output="hl">
+            <ext value=".lib" />
+            <outdir name="binaries/${OUT_ARCH}" />
+
+            <files id="hashlink_sources" />
+            <files id="pcre_sources" />
+        </target>
+    </section>
 </xml>

@@ -9,11 +9,22 @@
 #endif
 
 #undef DEFINE_PRIM_WITH_NAME
+#ifdef STATIC_HDLL
+#define DEFINE_PRIM_WITH_NAME(t,name,args,realName)
+#else
 #define DEFINE_PRIM_WITH_NAME(t,name,args,realName) \
     HL_EXTERN_C HL_EXPORT void *hlp_##realName( const char **sign ) { *sign = _FUN(t,args); return (void*)(&HL_NAME(realName)); }
+#endif
 
 #include "GLFW/glfw3.h"
 #include <string.h>
+
+static void glfw_call_haxe(vclosure *cb, vdynamic **args, int nargs) {
+	if (cb == NULL) return;
+	bool isException = false;
+	vdynamic *ret = hl_dyn_call_safe(cb, args, nargs, &isException);
+	if (isException) hl_print_uncaught_exception(ret);
+}
 
 HL_PRIM int HL_NAME(init)(void)
 {
@@ -178,7 +189,7 @@ static void native_monitor_callback(GLFWmonitor* monitor, int event) {
     vdynamic arg1 = { &hlt_i32, {.i = event} };
     vdynamic* args[2] = { &arg0, &arg1 };
     
-    hl_dyn_call(g_monitor_cb, args, 2);
+    glfw_call_haxe(g_monitor_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_monitor_callback)(vclosure* callback) {
@@ -459,7 +470,7 @@ static void native_window_pos_callback(GLFWwindow *window, int xpos, int ypos)
 	vdynamic arg_x = {&hlt_i32, {.i = xpos}};
 	vdynamic arg_y = {&hlt_i32, {.i = ypos}};
 	vdynamic *args[2] = {&arg_x, &arg_y};
-	hl_dyn_call(g_win_pos_cb, args, 2);
+	glfw_call_haxe(g_win_pos_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_window_pos_callback)(GLFWwindow *window, vclosure *callback)
@@ -488,7 +499,7 @@ static void native_window_size_callback(GLFWwindow *window, int width, int heigh
 	vdynamic arg_w = {&hlt_i32, {.i = width}};
 	vdynamic arg_h = {&hlt_i32, {.i = height}};
 	vdynamic *args[2] = {&arg_w, &arg_h};
-	hl_dyn_call(g_win_size_cb, args, 2);
+	glfw_call_haxe(g_win_size_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_window_size_callback)(GLFWwindow *window, vclosure *callback)
@@ -514,7 +525,7 @@ static void native_window_close_callback(GLFWwindow *window)
 {
 	if (g_win_close_cb == NULL)
 		return;
-	hl_dyn_call(g_win_close_cb, NULL, 0);
+	glfw_call_haxe(g_win_close_cb, NULL, 0);
 }
 
 HL_PRIM void HL_NAME(set_window_close_callback)(GLFWwindow *window, vclosure *callback)
@@ -540,7 +551,7 @@ static void native_window_refresh_callback(GLFWwindow *window)
 {
 	if (g_win_refresh_cb == NULL)
 		return;
-	hl_dyn_call(g_win_refresh_cb, NULL, 0);
+	glfw_call_haxe(g_win_refresh_cb, NULL, 0);
 }
 
 HL_PRIM void HL_NAME(set_window_refresh_callback)(GLFWwindow *window, vclosure *callback)
@@ -568,7 +579,7 @@ static void native_window_focus_callback(GLFWwindow *window, int focused)
 		return;
 	vdynamic arg_f = {&hlt_bool, {.b = focused != 0}};
 	vdynamic *args[1] = {&arg_f};
-	hl_dyn_call(g_win_focus_cb, args, 1);
+	glfw_call_haxe(g_win_focus_cb, args, 1);
 }
 
 HL_PRIM void HL_NAME(set_window_focus_callback)(GLFWwindow *window, vclosure *callback)
@@ -596,7 +607,7 @@ static void native_window_iconify_callback(GLFWwindow *window, int iconified)
 		return;
 	vdynamic arg_i = {&hlt_bool, {.b = iconified != 0}};
 	vdynamic *args[1] = {&arg_i};
-	hl_dyn_call(g_win_iconify_cb, args, 1);
+	glfw_call_haxe(g_win_iconify_cb, args, 1);
 }
 
 HL_PRIM void HL_NAME(set_window_iconify_callback)(GLFWwindow *window, vclosure *callback)
@@ -624,7 +635,7 @@ static void native_window_maximize_callback(GLFWwindow *window, int maximized)
 		return;
 	vdynamic arg_m = {&hlt_bool, {.b = maximized != 0}};
 	vdynamic *args[1] = {&arg_m};
-	hl_dyn_call(g_win_maximize_cb, args, 1);
+	glfw_call_haxe(g_win_maximize_cb, args, 1);
 }
 
 HL_PRIM void HL_NAME(set_window_maximize_callback)(GLFWwindow *window, vclosure *callback)
@@ -653,7 +664,7 @@ static void native_framebuffer_size_callback(GLFWwindow *window, int width, int 
 	vdynamic arg_w = {&hlt_i32, {.i = width}};
 	vdynamic arg_h = {&hlt_i32, {.i = height}};
 	vdynamic *args[2] = {&arg_w, &arg_h};
-	hl_dyn_call(g_framebuffer_size_cb, args, 2);
+	glfw_call_haxe(g_framebuffer_size_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_framebuffer_size_callback)(GLFWwindow *window, vclosure *callback)
@@ -682,7 +693,7 @@ static void native_window_content_scale_callback(GLFWwindow *window, float xscal
 	vdynamic arg_x = {&hlt_f32, {.f = xscale}};
 	vdynamic arg_y = {&hlt_f32, {.f = yscale}};
 	vdynamic *args[2] = {&arg_x, &arg_y};
-	hl_dyn_call(g_win_scale_cb, args, 2);
+	glfw_call_haxe(g_win_scale_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_window_content_scale_callback)(GLFWwindow *window, vclosure *callback)
@@ -817,7 +828,7 @@ static void native_key_callback(GLFWwindow *window, int key, int scancode, int a
 	vdynamic arg2 = {&hlt_i32, {.i = action}};
 	vdynamic arg3 = {&hlt_i32, {.i = mods}};
 	vdynamic *args[4] = {&arg0, &arg1, &arg2, &arg3};
-	hl_dyn_call(g_key_cb, args, 4);
+	glfw_call_haxe(g_key_cb, args, 4);
 }
 
 static vclosure *g_char_cb = NULL;
@@ -827,7 +838,7 @@ static void native_char_callback(GLFWwindow *window, unsigned int codepoint)
 		return;
 	vdynamic arg0 = {&hlt_i32, {.i = (int)codepoint}};
 	vdynamic *args[1] = {&arg0};
-	hl_dyn_call(g_char_cb, args, 1);
+	glfw_call_haxe(g_char_cb, args, 1);
 }
 
 static vclosure *g_char_mods_cb = NULL;
@@ -838,7 +849,7 @@ static void native_char_mods_callback(GLFWwindow *window, unsigned int codepoint
 	vdynamic arg0 = {&hlt_i32, {.i = (int)codepoint}};
 	vdynamic arg1 = {&hlt_i32, {.i = mods}};
 	vdynamic *args[2] = {&arg0, &arg1};
-	hl_dyn_call(g_char_mods_cb, args, 2);
+	glfw_call_haxe(g_char_mods_cb, args, 2);
 }
 
 static vclosure *g_mouse_button_cb = NULL;
@@ -850,7 +861,7 @@ static void native_mouse_button_callback(GLFWwindow *window, int button, int act
 	vdynamic arg1 = {&hlt_i32, {.i = action}};
 	vdynamic arg2 = {&hlt_i32, {.i = mods}};
 	vdynamic *args[3] = {&arg0, &arg1, &arg2};
-	hl_dyn_call(g_mouse_button_cb, args, 3);
+	glfw_call_haxe(g_mouse_button_cb, args, 3);
 }
 
 static vclosure *g_cursor_pos_cb = NULL;
@@ -861,7 +872,7 @@ static void native_cursor_pos_callback(GLFWwindow *window, double xpos, double y
 	vdynamic arg0 = {&hlt_f64, {.d = xpos}};
 	vdynamic arg1 = {&hlt_f64, {.d = ypos}};
 	vdynamic *args[2] = {&arg0, &arg1};
-	hl_dyn_call(g_cursor_pos_cb, args, 2);
+	glfw_call_haxe(g_cursor_pos_cb, args, 2);
 }
 
 static vclosure *g_cursor_enter_cb = NULL;
@@ -871,7 +882,7 @@ static void native_cursor_enter_callback(GLFWwindow *window, int entered)
 		return;
 	vdynamic arg0 = {&hlt_i32, {.i = entered}};
 	vdynamic *args[1] = {&arg0};
-	hl_dyn_call(g_cursor_enter_cb, args, 1);
+	glfw_call_haxe(g_cursor_enter_cb, args, 1);
 }
 
 static vclosure *g_scroll_cb = NULL;
@@ -882,7 +893,7 @@ static void native_scroll_callback(GLFWwindow *window, double xoffset, double yo
 	vdynamic arg0 = {&hlt_f64, {.d = xoffset}};
 	vdynamic arg1 = {&hlt_f64, {.d = yoffset}};
 	vdynamic *args[2] = {&arg0, &arg1};
-	hl_dyn_call(g_scroll_cb, args, 2);
+	glfw_call_haxe(g_scroll_cb, args, 2);
 }
 
 static vclosure *g_drop_cb = NULL;
@@ -899,7 +910,7 @@ static void native_drop_callback(GLFWwindow *window, int count, const char **pat
 	vdynamic arg0 = {&hlt_i32, {.i = count}};
 	vdynamic arg1 = {&hlt_array, {.ptr = arr}};
 	vdynamic *args[2] = {&arg0, &arg1};
-	hl_dyn_call(g_drop_cb, args, 2);
+	glfw_call_haxe(g_drop_cb, args, 2);
 }
 
 HL_PRIM void HL_NAME(set_key_callback)(GLFWwindow *window, vclosure *callback)

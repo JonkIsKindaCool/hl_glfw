@@ -91,7 +91,9 @@
         <compilerflag value="-I${HL_INCLUDE}" />
         <compilerflag value="-I${GLFW_INCLUDE}" />
 
-        <compilerflag value="-DLIBHL_STATIC" />
+        <section if="STATIC_HDLL">
+            <compilerflag value="-DSTATIC_HDLL" />
+        </section>
 
         <section if="windows">
             <compilerflag value="-std:c++20" />
@@ -123,36 +125,58 @@
         </section>
     </section>
 
-    <target id="default" tool="linker" toolid="dll" output="glfw">
-        <ext value=".hdll" />
-        <outdir name="binaries/${OUT_ARCH}" />
+    <section if="STATIC_HDLL">
+        <target id="default" tool="linker" toolid="static_link" output="glfw_static">
+            <section if="windows">
+                <ext value=".lib" />
+            </section>
+            <section unless="windows">
+                <ext value=".a" />
+            </section>
+            <outdir name="binaries/${OUT_ARCH}" />
 
-        <files id="haxe" />
-        <files id="glfw_sources" />
+            <files id="haxe" />
+            <files id="glfw_sources" />
+        </target>
+    </section>
 
-        <lib name="binaries/${OUT_ARCH}/hl.lib" />
+    <section unless="STATIC_HDLL">
+        <target id="default" tool="linker" toolid="dll" output="glfw">
+            <ext value=".hdll" />
+            <outdir name="binaries/${OUT_ARCH}" />
 
-        <section if="windows">
-            <lib name="opengl32.lib" />
-            <lib name="gdi32.lib" />
-            <lib name="user32.lib" />
-            <lib name="shell32.lib" />
-            <lib name="winmm.lib" />
-        </section>
+            <files id="haxe" />
+            <files id="glfw_sources" />
 
-        <section if="linux">
-            <lib name="-lGL" />
-            <lib name="-lX11" />
-            <lib name="-lpthread" />
-            <lib name="-ldl" />
-            <lib name="-lm" />
-        </section>
+            <section if="windows">
+                <lib name="binaries/${OUT_ARCH}/libhl.lib" />
+            </section>
+            <section if="mac">
+                <lib name="-Wl,-undefined,dynamic_lookup" />
+            </section>
 
-        <section if="mac">
-            <lib name="-framework Cocoa" />
-            <lib name="-framework OpenGL" />
-            <lib name="-framework IOKit" />
-            <lib name="-framework CoreVideo" />
-        </section>
-    </target>
+            <section if="windows">
+                <lib name="opengl32.lib" />
+                <lib name="gdi32.lib" />
+                <lib name="user32.lib" />
+                <lib name="shell32.lib" />
+                <lib name="winmm.lib" />
+            </section>
+
+            <section if="linux">
+                <lib name="-lGL" />
+                <lib name="-lX11" />
+                <lib name="-lpthread" />
+                <lib name="-ldl" />
+                <lib name="-lm" />
+            </section>
+
+            <section if="mac">
+                <lib name="-framework Cocoa" />
+                <lib name="-framework OpenGL" />
+                <lib name="-framework IOKit" />
+                <lib name="-framework CoreVideo" />
+            </section>
+        </target>
+    </section>
 </xml>
