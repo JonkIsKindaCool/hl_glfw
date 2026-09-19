@@ -11,9 +11,9 @@
         "extern"
     ],
     "description": "Hashlink bindings and wrappers for hashlink.",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "classPath": "src/",
-    "releasenote": "Initial release.",
+    "releasenote": "Static library support.",
     "contributors": [
         "JonkIsKindaCool"
     ],

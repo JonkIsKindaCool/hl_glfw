@@ -33,10 +33,27 @@ To build the native `.hdll` files you'll need:
 
 ## Build
 
-To build the `.hdll` files, run:
+To compile the native `.hdll` files, run:
 
 ```bash
 haxelib run hl_glfw
+```
+
+You can pass one of the following flags to select the build type:
+
+- `--static-hdll`: builds a static library for linking into a Hashlink C program.
+- `--dynamic-hdll`: builds a dynamic library for use with `.hl` projects.
+
+For example:
+
+```bash
+haxelib run hl_glfw --static-hdll
+```
+
+or
+
+```bash
+haxelib run hl_glfw --dynamic-hdll
 ```
 
 This compiles the native GLFW bindings for your current platform.
