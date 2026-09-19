@@ -17,5 +17,7 @@
     "contributors": [
         "JonkIsKindaCool"
     ],
-    "dependencies": {}
+    "dependencies": {
+        "hxcpp": ""
+    }
 }
